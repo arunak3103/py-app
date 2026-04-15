@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -17,7 +21,6 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ secrets.AWS_REGION }}
-        # If using OIDC:
         role-to-assume: arn:aws:iam::955030484275:role/oidc-role
 
     - name: Login to ECR
@@ -31,13 +34,13 @@ jobs:
 
     - name: Tag image
       run: |
-        docker tag $ECR_REPO:latest <ACCOUNT-ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPO:latest
+        docker tag $ECR_REPO:latest 955030484275.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPO:latest
       env:
         ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
 
     - name: Push to ECR
       run: |
-        docker push <ACCOUNT-ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPO:latest
+        docker push 955030484275.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPO:latest
       env:
         ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
 
